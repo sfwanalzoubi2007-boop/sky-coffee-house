@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen Dashboard - SKY Coffee House</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/kitchen.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/images/logo.jpg">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+<style>:root{--color-primary:#fff;--color-primary-dark:#bbb;--gradient-primary:linear-gradient(135deg,#fff,#777)}body{background:#050505!important}.kitchen-nav,.order-column,.service-alert{background:#090909!important}.btn-primary{background:#fff!important;color:#000!important}.table-control-panel{max-width:1400px;margin:18px auto 0;padding:18px 20px;background:#090909;border:1px solid #252525;border-radius:18px}.table-control-head{display:flex;justify-content:space-between;align-items:center;gap:16px}.table-control-head h2{margin:0 0 5px;font-size:20px}.table-control-head p{margin:0;color:#aaa;font-size:13px}.open-tables-count{border:1px solid #333;border-radius:999px;padding:8px 12px;color:#fff;font-size:12px;white-space:nowrap}.table-controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.table-control{display:flex;align-items:center;gap:8px;padding:9px 11px;border:1px solid #292929;border-radius:12px;background:#111}.table-control strong{font-size:14px}.table-control small{color:#aaa}.btn-close-table{border:1px solid #555;background:#fff;color:#000;border-radius:8px;padding:7px 10px;cursor:pointer;font-weight:700}.btn-close-table:disabled{opacity:.4;cursor:not-allowed}.table-closed{opacity:.65}@media(max-width:700px){.table-control-head{align-items:flex-start;flex-direction:column}.table-control-panel{margin:12px 10px 0}}
+</style></head>
+
+<body class="kitchen-body">
+    <nav class="kitchen-nav">
+        <div class="kitchen-nav-container">
+            <div class="nav-brand">
+                <div class="brand-icon">
+                    <img src="../assets/images/logo.jpg" alt="SKY Coffee House Logo">
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">SKY Coffee House</span>
+                    <div class="brand-sub-row">
+                        <span class="brand-tagline">Kitchen Dashboard</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-search">
+                <div class="search-wrapper">
+                    <input type="text" id="orderSearch" placeholder="Search Food, #Order, or Table...">
+                    <span class="search-icon"><i data-lucide="search"></i></span>
+                    <button id="clearSearch" class="btn-clear hidden">&times;</button>
+                </div>
+            </div>
+        </div>
+    <button id="skyLogout" type="button" style="margin-inline-start:12px;padding:9px 14px;border:1px solid #444;border-radius:10px;background:#111;color:#fff;cursor:pointer">تسجيل الخروج</button>
+    </nav>
+
+    <!-- Mobile Column Selector -->
+    <div class="mobile-tabs-container">
+        <div class="mobile-tabs">
+            <button class="mobile-tab active" data-column="received">New <span
+                    id="mobile-count-received">0</span></button>
+            <button class="mobile-tab" data-column="preparing">Cooking <span
+                    id="mobile-count-preparing">0</span></button>
+            <button class="mobile-tab" data-column="ready">Ready <span id="mobile-count-ready">0</span></button>
+            <button class="mobile-tab" data-column="served">Past <span id="mobile-count-served">0</span></button>
+        </div>
+    </div>
+
+    <section class="table-control-panel" id="tableControlPanel">
+        <div class="table-control-head">
+            <div>
+                <h2>إدارة الطاولات</h2>
+                <p>أغلق الطاولة بعد انتهاء الزبون. عند مسح QR من جديد تبدأ جلسة جديدة تلقائياً.</p>
+            </div>
+            <span id="openTablesCount" class="open-tables-count">0 طاولة مفتوحة</span>
+        </div>
+        <div id="tableControls" class="table-controls"></div>
+    </section>
+
+    <main class="kitchen-container">
+        <!-- Service Alerts (Waiter Calls) -->
+        <div id="serviceAlerts" class="service-alerts-container hidden">
+            <!-- Alert cards will be injected here -->
+        </div>
+
+        <!-- Order Sections -->
+        <div class="orders-grid">
+            <!-- Pending Orders -->
+            <section class="order-column" id="column-received">
+                <div class="column-header">
+                    <h2 class="column-title">New Orders</h2>
+                    <span id="count-received" class="column-count">0</span>
+                </div>
+                <div class="order-list" id="list-received">
+                    <!-- Cards injected here -->
+                </div>
+            </section>
+
+            <!-- Preparing Orders -->
+            <section class="order-column" id="column-preparing">
+                <div class="column-header">
+                    <h2 class="column-title">Preparing</h2>
+                    <span id="count-preparing" class="column-count">0</span>
+                </div>
+                <div class="order-list" id="list-preparing">
+                    <!-- Cards injected here -->
+                </div>
+            </section>
+
+            <!-- Ready Orders -->
+            <section class="order-column" id="column-ready">
+                <div class="column-header">
+                    <h2 class="column-title">Ready</h2>
+                    <span id="count-ready" class="column-count">0</span>
+                </div>
+                <div class="order-list" id="list-ready">
+                    <!-- Cards injected here -->
+                </div>
+            </section>
+
+            <!-- Served Orders (History) -->
+            <section class="order-column" id="column-served">
+                <div class="column-header">
+                    <h2 class="column-title">Recently Served</h2>
+                    <span id="count-served" class="column-count">0</span>
+                </div>
+                <div class="order-list" id="list-served">
+                    <!-- Cards injected here -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Notification Sound -->
+    <audio id="orderSound" src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3"
+        preload="auto"></audio>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/kitchen-lock.js"></script>
+    <script src="../js/kitchen.js"></script>
+</body>
+
+</html>

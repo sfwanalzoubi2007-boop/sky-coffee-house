@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description"
+        content="SKY Coffee House - Coffee & Drinks. Order delicious food directly from your table.">
+    <meta name="theme-color" content="#1a0a00">
+    <title>SKY Coffee House - Coffee & Drinks</title>
+
+    <!-- Preconnect for faster font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/logo.jpg">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+
+
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+<style>
+body{background:#050505;color:#fff}.navbar,.footer,.cart-sidebar,.modal-content{background:#050505!important}.navbar{border-bottom:1px solid rgba(255,255,255,.14)}
+:root{--color-primary:#fff;--color-primary-dark:#bdbdbd;--color-primary-light:#fff;--color-bg-dark:#050505;--color-bg-card:rgba(255,255,255,.045);--color-bg-card-hover:rgba(255,255,255,.08);--color-border:rgba(255,255,255,.16);--gradient-primary:linear-gradient(135deg,#fff,#777);--gradient-text:linear-gradient(135deg,#fff,#aaa,#fff);--shadow-glow:0 0 30px rgba(255,255,255,.12)}
+html{background:#050505} .brand-name,.section-title,.feature-title,.food-card-title,.cart-title,.modal-title{color:#fff}.gradient-text{background:linear-gradient(135deg,#fff,#9d9d9d);-webkit-background-clip:text;background-clip:text}.btn-primary{background:#fff!important;color:#050505!important;border-color:#fff!important}.btn-primary:hover{background:#ddd!important}.btn-outline{border-color:rgba(255,255,255,.25)!important;color:#fff!important}.category-tab.active{background:#fff!important;color:#050505!important}.food-card{border-color:rgba(255,255,255,.12)!important;background:linear-gradient(145deg,#101010,#070707)!important}.food-card:hover{border-color:#fff!important}.food-card-image{background:#111}.specials-slider{filter:grayscale(.12)}
+html[dir=rtl] .food-card,html[dir=rtl] .cart-item,html[dir=rtl] .modal-content{text-align:right}.category-tabs{overflow-x:auto;scrollbar-width:none}.category-tabs::-webkit-scrollbar{display:none}.btn-navbar-action{white-space:nowrap}
+</style></head>
+
+<body>
+
+    <!-- Redirecting handled in script.js if no table selected -->
+    <div id="welcomeScreen" class="hidden"></div>
+
+
+    <!-- ==================== -->
+    <!-- NAVIGATION -->
+    <!-- ==================== -->
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+        <div class="navbar-container">
+            <!-- Logo -->
+            <a href="#" class="navbar-brand">
+                <div class="brand-logo">
+                    <img src="assets/images/logo.jpg" alt="SKY Coffee House Logo">
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">SKY Coffee House</span>
+                </div>
+            </a>
+
+
+            <!-- Action Buttons -->
+            <div class="navbar-actions">
+                <!-- My Orders -->
+                <button id="viewOrdersBtn" class="btn btn-outline btn-navbar-action">
+                    <span class="btn-icon"><i data-lucide="clipboard-list"></i></span>
+                    <span id="viewOrdersBtnText" class="btn-text">طلباتي</span>
+                    <span id="activeOrdersBadge" class="order-badge hidden">0</span>
+                </button>
+
+                <!-- Call Waiter (Desktop) -->
+                <button id="callWaiterBtn" class="btn btn-outline btn-waiter">
+                    <span class="btn-icon"><i data-lucide="bell"></i></span>
+                    <span id="callWaiterBtnText" class="btn-text">طلب النادل</span>
+                </button>
+
+                <!-- Cart Button -->
+                <button id="languageToggle" class="btn btn-outline btn-navbar-action" aria-label="Change language"><span class="btn-icon"><i data-lucide="languages"></i></span><span id="languageToggleText" class="btn-text">English</span></button>
+                <button id="cartBtn" class="btn btn-outline btn-navbar-action btn-cart" aria-label="View cart">
+                    <span class="btn-icon">
+                        <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                    </span>
+                    <span id="cartBtnText" class="btn-text">السلة</span>
+                    <span id="cartCount" class="cart-count hidden">0</span>
+                </button>
+
+
+            </div>
+        </div>
+
+
+    </nav>
+
+
+
+
+    <!-- ==================== -->
+    <!-- CART SIDEBAR -->
+    <!-- ==================== -->
+    <div id="cartOverlay" class="overlay hidden" aria-hidden="true"></div>
+
+    <aside id="cartSidebar" class="cart-sidebar" role="dialog" aria-labelledby="cartTitle" aria-modal="true">
+        <div class="cart-container">
+            <!-- Cart Header -->
+            <header class="cart-header">
+                <h2 id="cartTitle" class="cart-title">طلبك</h2>
+                <button id="closeCart" class="btn-close" aria-label="Close cart">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </header>
+
+
+
+            <!-- Cart Items -->
+            <div class="cart-content">
+                <div id="cartItems" class="cart-items">
+                    <!-- Cart items will be inserted here by JavaScript -->
+                </div>
+
+                <!-- Empty Cart State -->
+                <div id="emptyCart" class="empty-cart">
+                    <div class="empty-cart-icon"><i data-lucide="shopping-bag"></i></div>
+                    <p id="emptyCartTitle" class="empty-cart-title">السلة فارغة</p>
+                    <p id="emptyCartSubtitle" class="empty-cart-subtitle">أضف بعض المشروبات اللذيذة!</p>
+                </div>
+            </div>
+
+            <!-- Cart Summary -->
+            <div id="cartSummary" class="cart-summary hidden">
+                <div class="summary-row">
+                    <span id="subtotalLabel">المجموع الفرعي</span>
+                    <span id="subtotal"><span class="currency">د.أ </span>0</span>
+                </div>
+                <div class="summary-row">
+                    <span id="vatLabel">الضريبة</span>
+                    <span id="vat"><span class="currency">د.أ </span>0</span>
+                </div>
+                <div class="summary-row total">
+                    <span id="totalLabel">الإجمالي</span>
+                    <span id="total" class="gradient-text"><span class="currency">د.أ </span>0</span>
+                </div>
+
+                <!-- Special Instructions -->
+                <div class="cart-instructions">
+                    <label id="instructionsLabel" for="instructions" class="instructions-label">ملاحظات خاصة (اختياري)</label>
+                    <textarea id="instructions" class="instructions-input" placeholder="هل لديك حساسية أو طلب خاص?" rows="2"></textarea>
+                </div>
+
+                <!-- Payment Method Info -->
+                <div class="payment-method-container">
+                    <div class="payment-options">
+                        <div class="payment-option active">
+                            <span class="payment-icon"><i data-lucide="banknote"></i></span>
+                            <div class="payment-details">
+                                <span id="cashLabel" class="payment-label">الدفع نقداً</span>
+                                <span id="cashSublabel" class="payment-sublabel">يرجى الدفع عند الكاشير</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Place Order Button -->
+                <button id="placeOrder" class="btn btn-primary btn-place-order">
+                    <span id="placeOrderText">تأكيد الطلب</span>
+                    <i data-lucide="send"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ==================== -->
+    <!-- MAIN CONTENT -->
+    <!-- ==================== -->
+    <main id="mainContent" class="main-content">
+
+        <!-- ==================== -->
+        <!-- HERO SECTION -->
+        <!-- ==================== -->
+        <section class="hero-section" aria-labelledby="heroTitle">
+            <!-- Unified Full-Screen Specials Background Slider -->
+            <div id="specials" class="specials-slider">
+                <!-- Slides will be dynamically injected here by JS -->
+            </div>
+
+
+        </section>
+
+        <!-- ==================== -->
+        <!-- MENU SECTION -->
+        <!-- ==================== -->
+        <section id="menu" class="menu-section" aria-labelledby="menuTitle">
+            <div class="section-container">
+                <!-- Section Header -->
+                <header class="section-header">
+                    <h2 id="menuTitle" class="section-title scroll-reveal">
+                        <span id="menuTitleText">قائمة المشروبات</span>
+                    </h2>
+                    <p class="section-subtitle scroll-reveal">
+                        <span id="menuSubtitleText">مشروبات محضّرة بعناية في SKY Coffee House</span>
+                    </p>
+                </header>
+
+                <!-- Search Bar -->
+                <div class="search-container scroll-reveal">
+                    <div class="search-box">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="M21 21l-4.35-4.35" />
+                        </svg>
+                        <input type="search" id="menuSearch" class="search-input" placeholder="ابحث عن مشروب..."
+                            aria-label="Search menu">
+                        <button id="clearSearch" class="search-clear hidden" aria-label="Clear search">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Category Tabs -->
+                <div class="category-tabs scroll-reveal" role="tablist" aria-label="Menu categories">
+                    <button class="category-tab active" data-category="all" role="tab" aria-selected="true"><span class="tab-icon"><i data-lucide="layout-grid"></i></span><span class="tab-text">الكل</span></button>
+                    <button class="category-tab" data-category="hot" role="tab" aria-selected="false"><span class="tab-icon"><i data-lucide="coffee"></i></span><span class="tab-text">مشروبات ساخنة</span></button>
+                    <button class="category-tab" data-category="specialty-hot" role="tab" aria-selected="false"><span class="tab-icon"><i data-lucide="cup-soda"></i></span><span class="tab-text">قهوة ساخنة مميزة</span></button>
+                    <button class="category-tab" data-category="frappe" role="tab" aria-selected="false"><span class="tab-icon"><i data-lucide="ice-cream-bowl"></i></span><span class="tab-text">فرابيه</span></button>
+                    <button class="category-tab" data-category="iced-coffee" role="tab" aria-selected="false"><span class="tab-icon"><i data-lucide="coffee"></i></span><span class="tab-text">قهوة باردة</span></button>
+                    <button class="category-tab" data-category="iced-tea" role="tab" aria-selected="false"><span class="tab-icon"><i data-lucide="glass-water"></i></span><span class="tab-text">شاي بارد</span></button>
+                    <button class="category-tab" data-category="fresh-juice" role="tab" aria-selected="false"><span class="tab-icon"><i data-lucide="citrus"></i></span><span class="tab-text">عصائر طازجة</span></button>
+                    <button class="category-tab" data-category="milk-smoothies" role="tab" aria-selected="false"><span class="tab-icon"><i data-lucide="milk"></i></span><span class="tab-text">سموذي بالحليب</span></button>
+                    <button class="category-tab" data-category="frozen" role="tab" aria-selected="false"><span class="tab-icon"><i data-lucide="snowflake"></i></span><span class="tab-text">مشروبات مثلجة</span></button>
+                    <button class="category-tab" data-category="shake" role="tab" aria-selected="false"><span class="tab-icon"><i data-lucide="glass-water"></i></span><span class="tab-text">شيك</span></button>
+                    <button class="category-tab" data-category="hookah" role="tab" aria-selected="false"><span class="tab-icon"><i data-lucide="flame"></i></span><span class="tab-text">أراجيل</span></button>
+                    <button class="category-tab" data-category="addons" role="tab" aria-selected="false"><span class="tab-icon"><i data-lucide="plus-circle"></i></span><span class="tab-text">إضافات</span></button>
+                </div>
+
+                <!-- Menu Grid -->
+                <div id="menuGrid" class="menu-grid" role="list">
+                    <!-- Menu items will be inserted here by JavaScript -->
+                </div>
+
+                <!-- No Results Message -->
+                <div id="noResults" class="no-results hidden">
+                    <div class="no-results-icon"><i data-lucide="search"></i></div>
+                    <p class="no-results-title">No dishes found</p>
+                    <p class="no-results-subtitle">Try a different search term</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== -->
+        <!-- FEATURES SECTION -->
+        <!-- ==================== -->
+        <section class="features-section" aria-labelledby="featuresTitle">
+            <div class="section-container">
+                <header class="section-header">
+                    <h2 id="featuresTitle" class="section-title scroll-reveal">
+                        <span id="featuresTitleText">لماذا SKY؟</span>
+                    </h2>
+                </header>
+
+                <div class="features-grid">
+                    <div class="feature-card scroll-reveal">
+                        <div class="feature-icon"><i data-lucide="chef-hat"></i></div>
+                        <h3 id="featureExpertTitle" class="feature-title">جودة عالية</h3>
+                        <p class="feature-description">Our chefs bring decades of experience in authentic
+                            Bangladeshi cuisine</p>
+                    </div>
+                    <div class="feature-card scroll-reveal">
+                        <div class="feature-icon"><i data-lucide="leaf"></i></div>
+                        <h3 id="featureFreshTitle" class="feature-title">مكونات طازجة</h3>
+                        <p class="feature-description">مكونات طازجة ونكهات متوازنة كل يوم.</p>
+                    </div>
+                    <div class="feature-card scroll-reveal">
+                        <div class="feature-icon"><i data-lucide="zap"></i></div>
+                        <h3 id="featureQuickTitle" class="feature-title">خدمة سريعة</h3>
+                        <p class="feature-description">طلبك يُحضّر بسرعة ويصل إلى طاولتك.</p>
+                    </div>
+                    <div class="feature-card scroll-reveal">
+                        <div class="feature-icon"><i data-lucide="check-circle"></i></div>
+                        <h3 id="featureQualityTitle" class="feature-title">تجربة مميزة</h3>
+                        <p class="feature-description">تجربة قهوة ومشروبات تستحق العودة.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== -->
+        <!-- FOOTER -->
+        <!-- ==================== -->
+        <footer class="footer" role="contentinfo">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <!-- Brand Column -->
+                    <div class="footer-brand">
+                        <div class="footer-logo">
+                            <div class="brand-logo">
+                                <img src="assets/images/logo.jpg" alt="SKY Coffee House Logo">
+                            </div>
+                            <div class="brand-text">
+                                <span class="brand-name">SKY Coffee House</span>
+                            </div>
+                        </div>
+                        <p class="footer-description">
+                            Authentic Bangladeshi cuisine. Every dish tells a story of tradition and
+                            love.
+                        </p>
+                        <div class="social-links">
+                            <a href="#" class="social-link" aria-label="Facebook">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
+                                </svg>
+                            </a>
+                            <a href="#" class="social-link" aria-label="Instagram">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="2" width="20" height="20" rx="5" />
+                                    <circle cx="12" cy="12" r="4" />
+                                    <circle cx="18" cy="6" r="1" />
+                                </svg>
+                            </a>
+                            <a href="#" class="social-link" aria-label="Twitter">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Contact Column -->
+                    <div class="footer-column">
+                        <h4 id="contactTitle" class="footer-heading">تواصل معنا</h4>
+                        <ul class="footer-links">
+                            <li>
+                                <span class="footer-icon"><i data-lucide="map-pin"></i></span>
+                                <a href="https://maps.app.goo.gl/3uwBWRVSph2sTfhd8">الأردن</a>
+                            </li>
+                            <li>
+                                <span class="footer-icon"><i data-lucide="phone"></i></span>
+                                <a href="tel:+8801234567890">+962 7 0000 0000</a>
+                            </li>
+                            <li>
+                                <span class="footer-icon"><i data-lucide="mail"></i></span>
+                                <a href="mailto:hello@skycoffeehouse.com">hello@skycoffeehouse.com</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Hours Column -->
+                    <div class="footer-column">
+                        <h4 id="hoursTitle" class="footer-heading">ساعات العمل</h4>
+                        <ul class="footer-links">
+                            <li>
+                                <span class="day">السبت - الخميس</span>
+                                <span class="time">9AM - 12AM</span>
+                            </li>
+                            <li>
+                                <span class="day">الجمعة</span>
+                                <span class="time">2PM - 12AM</span>
+                            </li>
+                            <li>
+                                <span class="day">السبت</span>
+                                <span class="time">9AM - 12AM</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Quick Links Column -->
+                    <div class="footer-column">
+                        <h4 id="quickLinksTitle" class="footer-heading">روابط سريعة</h4>
+                        <ul class="footer-links">
+                            <li><a id="menuLinkText" href="#menu">القائمة</a></li>
+                            <li><a id="specialsLinkText" href="#specials">اختيارات SKY</a></li>
+                            <li><a id="aboutLinkText" href="#">من نحن</a></li>
+                            <li><a id="privacyLinkText" href="#">الخصوصية</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Footer Bottom -->
+                <div class="footer-bottom">
+                    <p>
+                        © 2026 SKY Coffee House. جميع الحقوق محفوظة.
+                        <br>
+                        Designed & Developed by
+                        <a href="https://github.com/tamimtxd" target="_blank">
+                            Tamim
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- ==================== -->
+    <!-- MODALS -->
+    <!-- ==================== -->
+
+    <!-- Orders History Modal -->
+    <div id="ordersModal" class="modal hidden" role="dialog" aria-labelledby="ordersModalTitle" aria-modal="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-container">
+            <div class="modal-content modal-md">
+                <header class="modal-header">
+                    <h3 id="ordersModalTitle" class="modal-title">Order History</h3>
+                    <button id="closeOrdersModal" class="btn-close" aria-label="Close">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </header>
+                <div class="modal-body">
+                    <div id="ordersList" class="orders-list">
+                        <!-- Orders will be inserted here by JavaScript -->
+                    </div>
+                    <div id="noOrders" class="empty-state">
+                        <div class="empty-state-icon"><i data-lucide="clipboard-list"></i></div>
+                        <p class="empty-state-title">No orders yet</p>
+                        <p class="empty-state-subtitle">Your order history will appear here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Track Order Modal -->
+    <div id="trackOrderModal" class="modal hidden" role="dialog" aria-labelledby="trackOrderModalTitle"
+        aria-modal="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-container">
+            <div class="modal-content modal-md">
+                <header class="modal-header">
+                    <div class="modal-header-left">
+                        <h3 id="trackOrderModalTitle" class="modal-title">Track Order</h3>
+                        <div class="live-badge">
+                            <div class="live-dot"></div>
+                            <span>Live</span>
+                        </div>
+                    </div>
+                    <button id="closeTrackOrderModal" class="btn-close" aria-label="Close">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </header>
+                <div class="modal-body">
+                    <div id="trackOrderList" class="track-order-list">
+                        <!-- Active orders with status tracker will be inserted here -->
+                    </div>
+                    <div id="noActiveOrders" class="empty-state hidden">
+                        <div class="empty-state-icon">✅</div>
+                        <p class="empty-state-title">No active orders</p>
+                        <p class="empty-state-subtitle">All your orders have been served!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Success Modal -->
+    <div id="successModal" class="modal hidden" role="dialog" aria-labelledby="successModalTitle" aria-modal="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-container">
+            <div class="modal-content modal-sm">
+                <div class="success-content">
+                    <!-- Animated Checkmark -->
+                    <div class="success-checkmark">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+
+                    <h3 id="successModalTitle" class="success-title">Order Placed!</h3>
+                    <p class="success-subtitle">Your order has been sent to the kitchen</p>
+                    <p class="order-number">Order #<span id="orderNumber">12345</span></p>
+
+                    <!-- Info Cards -->
+                    <div class="success-info-grid">
+                        <div class="success-info-card">
+                            <div class="info-icon"><i data-lucide="clock"></i></div>
+                            <p class="info-label">Estimated Time</p>
+                            <p class="info-value">15-20 min</p>
+                        </div>
+                        <div class="success-info-card">
+                            <div class="info-icon"><i data-lucide="armchair"></i></div>
+                            <p class="info-label">Delivering to</p>
+                            <p class="info-value">Table <span id="successTableNumber">-</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Tip Message -->
+                    <div class="success-tip">
+                        <p><i data-lucide="info" class="inline-icon"></i> Tap <strong>"Track Order"</strong> button to
+                            see real-time status updates</p>
+                    </div>
+
+                    <button id="closeSuccessModal" class="btn btn-primary btn-block">
+                        Continue Ordering
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Item Detail Modal -->
+    <div id="itemModal" class="modal hidden" role="dialog" aria-labelledby="itemModalTitle" aria-modal="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-container">
+            <div class="modal-content modal-md">
+                <button id="closeItemModal" class="btn-close modal-close-top" aria-label="Close">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <div class="item-modal-content" id="itemModalContent">
+                    <!-- Left Column: Image & Core Info -->
+                    <div class="item-modal-left">
+                        <div class="item-modal-visual">
+                            <div id="itemModalIcon" class="main-image-container">
+                                <!-- Image inserted by JS -->
+                            </div>
+                            <div class="modal-rating-header">
+                                <div class="main-rating-stars">
+                                    <i data-lucide="star" class="icon-star-filled"></i>
+                                </div>
+                                <span id="itemModalAvgRating" class="rating-number">0.0</span>
+                                <span id="itemModalRatingCount" class="rating-count">(0 reviews)</span>
+                            </div>
+                        </div>
+
+                        <div class="item-modal-details-box">
+                            <div class="item-modal-header-info">
+                                <h3 id="itemModalTitle" class="item-title-lg">Item Name</h3>
+                                <p id="itemModalDesc" class="item-desc-md">Description</p>
+                            </div>
+
+                            <div class="item-modal-pricing-row">
+                                <span id="itemModalPrice" class="item-price-lg">৳0</span>
+                                <div class="item-qty-control">
+                                    <button class="qty-btn-v2" id="itemQtyMinus"
+                                        aria-label="Decrease quantity">−</button>
+                                    <span class="qty-val-v2" id="itemQtyValue">1</span>
+                                    <button class="qty-btn-v2" id="itemQtyPlus"
+                                        aria-label="Increase quantity">+</button>
+                                </div>
+                            </div>
+
+                            <button id="addItemToCart" class="btn btn-primary btn-add-cart-v2">
+                                <span>Add to Cart</span>
+                                <span class="btn-divider"></span>
+                                <span id="itemTotalPrice">৳0</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Reviews -->
+                    <div class="item-modal-right">
+                        <div class="reviews-section">
+                            <h4 class="reviews-section-title">CUSTOMER REVIEWS</h4>
+                            <div id="itemReviewsList" class="reviews-scroll-area">
+                                <!-- Reviews inserted by JS -->
+                            </div>
+                            <div id="noReviews" class="no-reviews-placeholder">
+                                <span>No reviews yet</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="modal hidden" role="dialog" aria-labelledby="ratingModalTitle" aria-modal="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-container">
+            <div class="modal-content modal-md">
+                <!-- Rating View -->
+                <div id="ratingView">
+                    <header class="modal-header">
+                        <div>
+                            <h3 id="ratingModalTitle" class="modal-title">Rate Your Food</h3>
+                            <p class="rating-order-id">Order #<span id="ratingOrderNumber">-</span></p>
+                        </div>
+                        <button id="closeRatingModal" class="btn-close" aria-label="Close">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </header>
+                    <div class="modal-body">
+                        <p class="rating-subtitle">How was each dish? Tap the stars to rate!</p>
+                        <div id="ratingItemsList" class="rating-items-list">
+                            <!-- Per-item rating rows inserted by JS -->
+                        </div>
+                    </div>
+                    <div class="rating-actions">
+                        <button id="skipRating" class="btn btn-outline">Skip</button>
+                        <button id="submitRating" class="btn btn-primary">
+                            <span>Submit</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- FLOATING ELEMENTS -->
+    <!-- ==================== -->
+
+
+
+    <!-- Floating Track Order Button -->
+    <div id="floatingTrackOrder" class="floating-track hidden">
+        <button id="floatingTrackBtn" class="fab fab-track">
+            <div class="live-dot"></div>
+            <span class="fab-text">Track Order</span>
+            <span id="floatingOrderCount" class="fab-badge">1</span>
+        </button>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true">
+        <!-- Toast notifications will be inserted here -->
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top hidden" aria-label="Back to top">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 15l-6-6-6 6" />
+        </svg>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/script.js"></script>
+</body>
+
+</html>
