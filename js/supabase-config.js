@@ -2,7 +2,7 @@
 // Leave these placeholders until you create/use YOUR OWN Supabase project.
 // The client must NOT be created with placeholder values because that stops the whole
 // customer JavaScript from loading (which would break the cart).
-const SUPABASE_URL = 'https://aadsgpjfqzhk....supabase.co';
+const SUPABASE_URL = 'https://aadsgpjfqzhkysrirgos.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable__Jr_khPA8_bItZj03E_yDA_BeUTjtzq';
 
 let supabaseClient;
